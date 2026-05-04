@@ -17,26 +17,48 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.GROQ_API_KEY;
+  console.log('API KEY PRESENT:', !!apiKey);
 
   if (!apiKey) {
     return res.status(500).json({ error: 'GROQ_API_KEY not found on server' });
   }
 
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 2000
-      })
-    });
+    let response;
 
-    const data = await response.json();
+try {
+  response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 2000
+    })
+  });
+} catch (err) {
+  console.error('Fetch failed:', err);
+  return res.status(500).json({
+    error: 'Failed to call Groq API',
+    details: err.message
+  });
+}
+
+    let data;
+
+try {
+  data = await response.json();
+} catch (err) {
+  const raw = await response.text();
+  console.error('Invalid JSON from Groq:', raw);
+  return res.status(500).json({
+    error: 'Invalid JSON response from Groq',
+    raw
+  });
+}
 
     if (!response.ok) {
       return res.status(response.status).json({
