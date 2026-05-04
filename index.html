@@ -842,7 +842,7 @@ const clean = rawText
       if (match) result = JSON.parse(match[0]);
       else throw new Error('Could not parse AI response. Please try again.');
     }
-
+//<!-- test change -->
     // Validate required fields
     if (!result.winner || !result.winnerLetter || !Array.isArray(result.options)) {
       console.warn('Using raw AI response fallback');
