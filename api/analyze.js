@@ -1,31 +1,29 @@
 export default async function handler(req, res) {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
-  const { prompt } = req.body;
+  const { prompt } = req.body || {};
 
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid prompt' });
   }
 
-  if (prompt.length > 8000) {
-    return res.status(400).json({ error: 'Prompt too long' });
-  }
-
   const apiKey = process.env.GROQ_API_KEY;
+
   if (!apiKey) {
-    return res.status(500).json({ error: 'GROQ API key not configured' });
+    return res.status(500).json({ error: 'GROQ_API_KEY not found on server' });
   }
 
   try {
-    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,27 +31,34 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        max_tokens: 2500,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2000
       })
     });
 
-    if (!groqRes.ok) {
-      const errBody = await groqRes.json().catch(() => ({}));
-      return res.status(groqRes.status).json({
-        error: errBody.error?.message || `Groq API error ${groqRes.status}`
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: data.error?.message || 'Groq API error'
       });
     }
 
-    const data = await groqRes.json();
-    const text = data.choices?.[0]?.message?.content || '';
+    const text = data?.choices?.[0]?.message?.content;
+
+    if (!text) {
+      return res.status(500).json({ error: 'Invalid response from Groq' });
+    }
 
     return res.status(200).json({
       content: [{ type: 'text', text }]
     });
 
-  } catch (err) {
-    console.error('Proxy error:', err);
-    return res.status(500).json({ error: 'Server error. Please try again.' });
+  } catch (error) {
+    console.error('Function crash:', error);
+    return res.status(500).json({
+      error: 'Server crashed',
+      details: error.message
+    });
   }
-}v
+}
