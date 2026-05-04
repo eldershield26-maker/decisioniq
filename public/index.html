@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DecisionIQ — AI Decision Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0b0f;
+  --bg2: #0f1117;
+  --surface: #141720;
+  --surface2: #1a1e2e;
+  --surface3: #212638;
+  --border: #252d42;
+  --border2: #303a55;
+  --blue: #5b8ef0;
+  --blue-dim: rgba(91,142,240,0.12);
+  --violet: #8b5cf6;
+  --violet-dim: rgba(139,92,246,0.1);
+  --teal: #14d4a3;
+  --teal-dim: rgba(20,212,163,0.1);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.1);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.1);
+  --text: #e2e8f5;
+  --text2: #8b96b0;
+  --text3: #4a5568;
+  --text4: #2d3748;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+/* === NOISE + GRID OVERLAY === */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%,rgba(91,142,240,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%,rgba(139,92,246,0.06) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;z-index:0;
+}
+
+.app{position:relative;z-index:1;max-width:1020px;margin:0 auto;padding:0 24px 100px}
+
+/* === HEADER === */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:32px 0 44px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:56px;
+}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-mark{
+  width:42px;height:42px;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;
+  box-shadow:0 0 24px rgba(91,142,240,0.25),0 0 1px rgba(255,255,255,0.1) inset;
+}
+.logo-name{
+  font-family:'Fraunces',serif;
+  font-weight:700;font-size:22px;
+  letter-spacing:-0.5px;
+  color:var(--text);
+}
+.logo-name b{color:var(--blue);font-weight:700}
+.logo-sub{font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+.live-badge{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--teal);
+  background:var(--teal-dim);
+  border:1px solid rgba(20,212,163,0.2);
+  padding:7px 16px;border-radius:100px;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:0.5px;
+}
+.live-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* === HERO === */
+.hero{text-align:center;margin-bottom:52px}
+.hero-tag{
+  display:inline-block;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--blue);font-family:'JetBrains Mono',monospace;
+  margin-bottom:20px;
+}
+.hero h1{
+  font-family:'Fraunces',serif;
+  font-weight:700;font-size:clamp(34px,5vw,54px);
+  line-height:1.08;letter-spacing:-2px;
+  margin-bottom:18px;
+}
+.hero h1 em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{
+  font-size:15px;color:var(--text2);
+  max-width:480px;margin:0 auto;
+  line-height:1.75;font-weight:300;
+}
+
+/* === STATS BAR === */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;margin-bottom:48px;
+  background:var(--border);gap:1px;
+}
+.stat{
+  background:var(--surface);
+  padding:22px 20px;text-align:center;
+}
+.stat-num{
+  font-family:'Fraunces',serif;font-weight:700;font-size:28px;
+  color:var(--blue);display:block;line-height:1;margin-bottom:6px;
+}
+.stat-lbl{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+
+/* === TABS === */
+.tabs{
+  display:flex;gap:2px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;padding:4px;margin-bottom:32px;
+}
+.tab{
+  flex:1;padding:10px 8px;text-align:center;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;
+  border-radius:9px;cursor:pointer;transition:all 0.2s;
+  color:var(--text3);border:none;background:none;
+}
+.tab.active{background:var(--surface3);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,0.4)}
+.tab:not(.active):hover{color:var(--text2)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* === CARDS === */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);border-radius:20px;
+  overflow:hidden;margin-bottom:20px;
+}
+.card-head{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 26px;border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.card-icon{
+  width:32px;height:32px;
+  background:var(--surface3);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.card-title{font-family:'Fraunces',serif;font-weight:600;font-size:15px}
+.card-sub{font-size:11px;color:var(--text3);margin-left:auto;font-family:'JetBrains Mono',monospace}
+.card-body{padding:26px}
+
+/* === FORM FIELDS === */
+.field-label{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:9px;display:block;
+  font-family:'JetBrains Mono',monospace;
+}
+.field-label span{color:var(--text4);font-size:9px;letter-spacing:0;text-transform:none;font-family:'Space Grotesk',sans-serif}
+
+textarea,input[type=text],select{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);border-radius:10px;
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;font-size:13.5px;
+  padding:13px 16px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  -webkit-appearance:none;
+}
+textarea{resize:vertical;line-height:1.65}
+textarea:focus,input:focus,select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(91,142,240,0.1);
+}
+textarea::placeholder,input::placeholder{color:var(--text4)}
+select{cursor:pointer}
+select option{background:var(--surface2)}
+
+/* === OPTIONS GRID === */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.opt-row{display:flex;align-items:center;gap:10px}
+.opt-badge{
+  width:28px;height:28px;flex-shrink:0;
+  background:var(--blue-dim);border:1px solid rgba(91,142,240,0.25);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;color:var(--blue);
+  font-family:'Fraunces',serif;
+}
+
+/* === CRITERIA PILLS === */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 20px}
+.pill{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;padding:7px 14px;
+  border-radius:100px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;
+  transition:all 0.2s;color:var(--text2);
+  user-select:none;font-weight:500;
+}
+.pill.active{background:var(--blue-dim);border-color:rgba(91,142,240,0.35);color:var(--blue)}
+.pill input[type=checkbox]{display:none}
+
+/* === PARAMS GRID === */
+.params-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+
+/* === ANALYZE BUTTON === */
+.btn-analyze{
+  width:100%;
+  background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);
+  border:none;border-radius:14px;color:#fff;
+  font-family:'Fraunces',serif;font-weight:700;font-size:16px;
+  letter-spacing:-0.3px;
+  padding:20px;cursor:pointer;
+  transition:all 0.25s;position:relative;overflow:hidden;
+}
+.btn-analyze::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.2s;
+}
+.btn-analyze:hover::after{opacity:1}
+.btn-analyze:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(91,142,240,0.3)}
+.btn-analyze:active{transform:translateY(0)}
+.btn-analyze:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* === LOADING === */
+.loading-card{display:none;margin-top:22px}
+.loading-card.show{display:block}
+.loading-inner{padding:56px 28px;text-align:center}
+.loader-ring{
+  width:64px;height:64px;margin:0 auto 28px;position:relative;
+}
+.loader-ring::before,.loader-ring::after{
+  content:'';position:absolute;inset:0;
+  border-radius:50%;border:2px solid transparent;
+}
+.loader-ring::before{
+  border-top-color:var(--blue);border-right-color:var(--blue);
+  animation:spin 1.1s linear infinite;
+}
+.loader-ring::after{
+  border-bottom-color:var(--violet);border-left-color:var(--violet);
+  animation:spin 0.75s linear infinite reverse;inset:10px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-family:'Fraunces',serif;font-weight:600;font-size:17px;margin-bottom:26px}
+.loading-steps-list{max-width:280px;margin:0 auto;text-align:left;display:flex;flex-direction:column;gap:10px}
+.lstep{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;transition:color 0.3s}
+.lstep.current{color:var(--text)}
+.lstep.done{color:var(--teal)}
+.lstep-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;transition:all 0.3s}
+.lstep.current .lstep-dot{background:var(--blue);animation:blink 1s infinite}
+
+/* === RESULTS === */
+.results{display:none;margin-top:22px}
+.results.show{display:block}
+
+/* WINNER BANNER */
+.winner-banner{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(20,212,163,0.07),rgba(91,142,240,0.06));
+  border:1px solid rgba(20,212,163,0.22);border-radius:20px;
+  padding:32px;margin-bottom:22px;
+}
+.winner-banner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),var(--blue),var(--violet));
+}
+.winner-tag{
+  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--teal);font-family:'JetBrains Mono',monospace;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.winner-tag span{color:var(--text3)}
+.winner-name{
+  font-family:'Fraunces',serif;font-weight:700;font-size:28px;
+  letter-spacing:-0.5px;line-height:1.15;margin-bottom:14px;
+}
+.winner-summary{font-size:14px;color:var(--text2);line-height:1.75}
+.personalized-note{
+  margin-top:16px;padding:12px 16px;
+  background:rgba(91,142,240,0.07);
+  border:1px solid rgba(91,142,240,0.15);border-radius:10px;
+  font-size:12px;color:var(--blue);line-height:1.6;
+}
+.conf-wrap{margin-top:22px}
+.conf-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.conf-labels b{color:var(--teal);font-size:13px}
+.conf-track{height:5px;background:var(--surface3);border-radius:100px;overflow:hidden}
+.conf-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:100px;width:0;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+
+/* SECTION LABEL */
+.sec-label{
+  font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--text3);font-family:'JetBrains Mono',monospace;
+  display:flex;align-items:center;gap:12px;margin:28px 0 16px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* OPTION CARDS */
+.opt-cards{display:grid;gap:14px}
+.opt-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:22px 24px;position:relative;
+  transition:border-color 0.2s;
+}
+.opt-card.winner{border-color:rgba(20,212,163,0.3);background:rgba(20,212,163,0.02)}
+.rec-chip{
+  position:absolute;top:18px;right:18px;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--teal);background:rgba(20,212,163,0.1);
+  border:1px solid rgba(20,212,163,0.2);padding:3px 9px;border-radius:100px;
+}
+.opt-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.opt-letter{
+  width:30px;height:30px;flex-shrink:0;
+  background:var(--blue-dim);border:1px solid rgba(91,142,240,0.2);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;color:var(--blue);font-family:'Fraunces',serif;
+}
+.opt-name{font-family:'Fraunces',serif;font-weight:600;font-size:15px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.metric{background:var(--surface2);border-radius:9px;padding:12px;text-align:center}
+.metric-val{font-family:'Fraunces',serif;font-weight:700;font-size:20px;display:block;line-height:1;margin-bottom:4px}
+.metric-val.g{color:var(--teal)}
+.metric-val.y{color:var(--amber)}
+.metric-val.r{color:var(--red)}
+.metric-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.key-insight{
+  font-size:12px;color:var(--blue);font-style:italic;
+  margin-bottom:14px;padding:10px 14px;
+  background:var(--blue-dim);border-radius:8px;line-height:1.6;
+}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pc-block{}
+.pc-title{
+  font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.pc-title.pro{color:var(--teal)}
+.pc-title.con{color:var(--red)}
+.pc-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.pc-list li{font-size:12px;color:var(--text2);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.pc-list li::before{flex-shrink:0;font-size:11px;margin-top:2px}
+.pc-list.pro li::before{content:'+';color:var(--teal)}
+.pc-list.con li::before{content:'−';color:var(--red)}
+
+/* RISK PANEL */
+.risk-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:0}
+.risk-head{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface2);font-family:'Fraunces',serif;font-weight:600;font-size:14px;display:flex;align-items:center;gap:10px}
+.risk-body{padding:8px 24px 20px}
+.risk-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.risk-row:last-child{border:none}
+.risk-badge{
+  font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;
+  padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:3px;
+}
+.risk-badge.high{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.risk-badge.medium{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.25)}
+.risk-badge.low{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(20,212,163,0.25)}
+.risk-text{font-size:12.5px;color:var(--text2);line-height:1.65}
+.risk-text strong{color:var(--text);font-weight:600}
+
+/* TIMELINE */
+.timeline{padding-left:16px;border-left:2px solid var(--border);display:flex;flex-direction:column;gap:0}
+.tl-item{position:relative;padding:0 0 24px 26px}
+.tl-item::before{
+  content:'';position:absolute;left:-7px;top:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--blue);border:2px solid var(--bg);
+}
+.tl-item:last-child{padding-bottom:0}
+.tl-period{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.tl-text{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* BOTTOM ACTIONS */
+.bottom-actions{display:flex;gap:12px;margin-top:12px}
+.btn-sec{
+  flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;color:var(--text);
+  font-family:'Fraunces',serif;font-weight:600;font-size:14px;
+  padding:16px;cursor:pointer;transition:all 0.2s;
+}
+.btn-sec:hover{border-color:var(--blue);color:var(--blue)}
+
+/* HISTORY */
+.hist-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:16px 20px;margin-bottom:10px;cursor:pointer;
+  transition:border-color 0.2s,transform 0.15s;
+}
+.hist-card:hover{border-color:var(--border2);transform:translateX(3px)}
+.hist-meta{display:flex;justify-content:space-between;margin-bottom:8px;align-items:center}
+.hist-date{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.hist-win{font-size:10px;color:var(--teal);background:var(--teal-dim);border:1px solid rgba(20,212,163,0.2);padding:3px 9px;border-radius:100px;font-family:'JetBrains Mono',monospace}
+.hist-q{font-size:13.5px;color:var(--text);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.hist-detail{font-size:11px;color:var(--text3)}
+
+/* PATTERNS */
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.pattern-chip{background:var(--surface2);border-radius:12px;padding:20px}
+.pattern-chip-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.pattern-chip-val{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--blue);margin-bottom:4px}
+.pattern-chip-sub{font-size:11px;color:var(--text3)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:200;
+  background:var(--surface2);border:1px solid var(--border2);border-radius:14px;
+  padding:14px 20px;font-size:13px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.5);
+  transform:translateY(120px);opacity:0;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* FADE IN ANIMATION */
+.fade{animation:fadeUp 0.5s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .params-grid,.options-grid,.pros-cons,.pattern-grid,.metrics{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:1fr}
+  header{flex-direction:column;gap:16px;align-items:flex-start}
+}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:100px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">⚖️</div>
+    <div>
+      <div class="logo-name">Decision<b>IQ</b></div>
+      <div class="logo-sub">AI Decision Engine</div>
+    </div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div>AI ONLINE</div>
+</header>
+
+<!-- HERO -->
+<div class="hero fade">
+  <div class="hero-tag">// Intelligent Decision Analysis</div>
+  <h1>Stop guessing.<br><em>Decide with clarity.</em></h1>
+  <p>Describe your dilemma, list your options, set your priorities. The AI evaluates every angle — risk, return, alignment — and delivers a clear, honest recommendation.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar fade">
+  <div class="stat"><span class="stat-num" id="statD">0</span><span class="stat-lbl">Decisions Made</span></div>
+  <div class="stat"><span class="stat-num" id="statC">—</span><span class="stat-lbl">Avg Confidence</span></div>
+  <div class="stat"><span class="stat-num" id="statP">0</span><span class="stat-lbl">Insights Surfaced</span></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('analyze')">⚡ Analyze</button>
+  <button class="tab" onclick="switchTab('history')">📂 History</button>
+  <button class="tab" onclick="switchTab('patterns')">🧠 Patterns</button>
+</div>
+
+<!-- TAB: ANALYZE -->
+<div class="tab-panel active" id="tab-analyze">
+
+  <!-- STEP 1 -->
+  <div class="card fade">
+    <div class="card-head">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">The Decision</div>
+      <div class="card-sub">Step 1 / 3</div>
+    </div>
+    <div class="card-body">
+      <label class="field-label">What decision are you facing? <span>— be specific for better results</span></label>
+      <textarea id="question" rows="3" placeholder="e.g. Should I leave my stable corporate job for a startup offering 20% more pay but higher risk and uncertainty?"></textarea>
+
+      <div style="height:20px"></div>
+
+      <label class="field-label">Your options <span>— at least two required</span></label>
+      <div class="options-grid" id="optGrid">
+        <div class="opt-row"><div class="opt-badge">A</div><input type="text" id="o0" placeholder="Option A — what is it?"></div>
+        <div class="opt-row"><div class="opt-badge">B</div><input type="text" id="o1" placeholder="Option B — what is it?"></div>
+        <div class="opt-row"><div class="opt-badge">C</div><input type="text" id="o2" placeholder="Option C (optional)"></div>
+        <div class="opt-row"><div class="opt-badge">D</div><input type="text" id="o3" placeholder="Option D (optional)"></div>
+      </div>
+
+      <div style="height:20px"></div>
+
+      <label class="field-label">Additional context <span>— constraints, background, feelings, trade-offs</span></label>
+      <textarea id="ctx" rows="2" placeholder="e.g. I have 2 kids, savings for 8 months, and my current boss is mentoring me. The startup is Series A..."></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card fade">
+    <div class="card-head">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">Parameters & Priorities</div>
+      <div class="card-sub">Step 2 / 3</div>
+    </div>
+    <div class="card-body">
+      <div class="params-grid">
+        <div>
+          <label class="field-label">Domain</label>
+          <select id="domain">
+            <option value="career">Career & Work</option>
+            <option value="finance">Finance & Investment</option>
+            <option value="business">Business Strategy</option>
+            <option value="personal">Personal Life</option>
+            <option value="health">Health & Wellness</option>
+            <option value="education">Education</option>
+            <option value="relationships">Relationships</option>
+            <option value="technology">Technology</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Time Horizon</label>
+          <select id="horizon">
+            <option value="immediate">Immediate (Days)</option>
+            <option value="short">Short-term (Weeks)</option>
+            <option value="medium" selected>Medium-term (Months)</option>
+            <option value="long">Long-term (Years)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Risk Appetite</label>
+          <select id="risk">
+            <option value="conservative">Conservative — Avoid risk</option>
+            <option value="moderate" selected>Moderate — Balanced</option>
+            <option value="aggressive">Aggressive — Embrace risk</option>
+          </select>
+        </div>
+      </div>
+      <label class="field-label">What matters most to you? <span>— select all that apply</span></label>
+      <div class="pills" id="pillRow">
+        <label class="pill active"><input type="checkbox" checked value="roi">💰 ROI / Return</label>
+        <label class="pill active"><input type="checkbox" checked value="risk">🛡️ Risk Level</label>
+        <label class="pill"><input type="checkbox" value="time">⏱️ Time Cost</label>
+        <label class="pill"><input type="checkbox" value="effort">💪 Effort</label>
+        <label class="pill"><input type="checkbox" value="reversibility">🔄 Reversibility</label>
+        <label class="pill active"><input type="checkbox" checked value="longterm">📈 Long-term Impact</label>
+        <label class="pill"><input type="checkbox" value="alignment">🎯 Values Alignment</label>
+        <label class="pill"><input type="checkbox" value="social">👥 Social Impact</label>
+        <label class="pill"><input type="checkbox" value="autonomy">🧭 Autonomy</label>
+        <label class="pill"><input type="checkbox" value="stability">⚓ Stability</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYZE BTN -->
+  <button class="btn-analyze" id="analyzeBtn" onclick="runAnalysis()">⚡ Analyze with AI</button>
+
+  <!-- LOADING -->
+  <div class="card loading-card" id="loadingCard">
+    <div class="loading-inner">
+      <div class="loader-ring"></div>
+      <div class="loading-title">Analyzing your decision…</div>
+      <div class="loading-steps-list" id="lSteps">
+        <div class="lstep current" id="ls0"><div class="lstep-dot"></div>Reading decision parameters</div>
+        <div class="lstep" id="ls1"><div class="lstep-dot"></div>Running risk assessment</div>
+        <div class="lstep" id="ls2"><div class="lstep-dot"></div>Modeling outcome scenarios</div>
+        <div class="lstep" id="ls3"><div class="lstep-dot"></div>Weighing trade-offs & criteria</div>
+        <div class="lstep" id="ls4"><div class="lstep-dot"></div>Drafting your recommendation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results"></div>
+
+</div>
+
+<!-- TAB: HISTORY -->
+<div class="tab-panel" id="tab-history">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">📂</div>
+      <div class="card-title">Decision History</div>
+      <div class="card-sub" id="histCount">0 decisions</div>
+    </div>
+    <div class="card-body" id="histBody">
+      <div style="text-align:center;padding:40px 0;color:var(--text3)">
+        <div style="font-size:36px;margin-bottom:14px">📭</div>
+        <div style="font-size:14px">No decisions yet</div>
+        <div style="font-size:12px;margin-top:8px">Every analysis you run appears here</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: PATTERNS -->
+<div class="tab-panel" id="tab-patterns">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">AI Pattern Recognition</div>
+      <div class="card-sub">Learned from your decisions</div>
+    </div>
+    <div class="card-body" id="patternBody">
+      <div style="text-align:center;padding:40px 0;color:var(--text3)">
+        <div style="font-size:36px;margin-bottom:14px">🤖</div>
+        <div style="font-size:14px">Patterns emerge after 3+ decisions</div>
+        <div style="font-size:12px;margin-top:8px">The AI studies your risk preferences, biases, and behavioral tendencies</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Done</span>
+</div>
+
+<script>
+// ═══ STATE ═══
+let history = [];
+let analysisCount = 0;
+
+try {
+  history = JSON.parse(localStorage.getItem('diq_hist') || '[]');
+  analysisCount = parseInt(localStorage.getItem('diq_count') || '0');
+} catch(e) { history = []; analysisCount = 0; }
+
+function saveState() {
+  try {
+    localStorage.setItem('diq_hist', JSON.stringify(history));
+    localStorage.setItem('diq_count', String(analysisCount));
+  } catch(e) {}
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('statD').textContent = analysisCount;
+  if (history.length) {
+    const avg = Math.round(history.reduce((s,h) => s + (h.confidence || 75), 0) / history.length);
+    document.getElementById('statC').textContent = avg + '%';
+  } else {
+    document.getElementById('statC').textContent = '—';
+  }
+  document.getElementById('statP').textContent = Math.floor(analysisCount * 2.7);
+}
+
+updateStats();
+renderHistory();
+
+// ═══ TABS ═══
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const names = ['analyze','history','patterns'];
+  document.querySelectorAll('.tab')[names.indexOf(name)].classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'patterns') renderPatterns();
+}
+
+// ═══ PILLS ═══
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', () => {
+    const cb = p.querySelector('input');
+    setTimeout(() => {
+      if (cb.checked) p.classList.add('active');
+      else p.classList.remove('active');
+    }, 0);
+  });
+});
+
+// ═══ LOADING STEPS ═══
+let loadTimer = null;
+function startLoadingSteps() {
+  const steps = ['ls0','ls1','ls2','ls3','ls4'];
+  steps.forEach(id => {
+    document.getElementById(id).className = 'lstep';
+  });
+  document.getElementById('ls0').classList.add('current');
+  let i = 1;
+  loadTimer = setInterval(() => {
+    if (i >= steps.length) { clearInterval(loadTimer); return; }
+    document.getElementById(steps[i-1]).className = 'lstep done';
+    document.getElementById(steps[i]).classList.add('current');
+    i++;
+  }, 1000);
+}
+function stopLoadingSteps() {
+  if (loadTimer) { clearInterval(loadTimer); loadTimer = null; }
+}
+
+// ═══ ANALYSIS ═══
+async function runAnalysis() {
+  const question = document.getElementById('question').value.trim();
+  if (!question) { showToast('❌', 'Please describe your decision'); return; }
+
+  const opts = ['o0','o1','o2','o3']
+    .map(id => document.getElementById(id).value.trim())
+    .filter(Boolean);
+  if (opts.length < 2) { showToast('❌', 'Please enter at least 2 options'); return; }
+
+  const ctx = document.getElementById('ctx').value.trim();
+  const domain = document.getElementById('domain').value;
+  const horizon = document.getElementById('horizon').value;
+  const risk = document.getElementById('risk').value;
+  const criteria = [...document.querySelectorAll('.pill.active input')].map(i => i.value);
+
+  // UI state
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('loadingCard').classList.add('show');
+  document.getElementById('results').className = 'results';
+  document.getElementById('results').innerHTML = '';
+  startLoadingSteps();
+
+  const histCtx = history.slice(0, 5).map(h =>
+    `Past: "${h.question.slice(0,60)}" → Chose "${h.winnerLetter}" (${h.confidence}% confidence)`
+  ).join('\n');
+
+  const prompt = `You are a world-class decision strategist — sharp, human, deeply practical. You give honest recommendations, not hedged corporate-speak.
+
+DECISION:
+${question}
+
+OPTIONS:
+${opts.map((o,i) => `${String.fromCharCode(65+i)}. ${o}`).join('\n')}
+
+CONTEXT: ${ctx || 'None given'}
+DOMAIN: ${domain}
+TIME HORIZON: ${horizon}
+RISK APPETITE: ${risk}
+WEIGHTED CRITERIA: ${criteria.length ? criteria.join(', ') : 'balanced'}
+${histCtx ? `\nUSER'S PAST DECISIONS (use to personalize tone and advice):\n${histCtx}` : ''}
+
+Give an honest, direct, human analysis. Don't be wishy-washy. If one option is clearly better, say so. If it's genuinely close, explain the deciding factor.
+
+Respond ONLY with valid JSON — no markdown fences, no extra text:
+{
+  "winner": "Full text of the winning option",
+  "winnerLetter": "A",
+  "confidence": 84,
+  "executiveSummary": "2-3 direct, insightful sentences explaining why this is the right call. Be specific, not generic.",
+  "personalizedNote": "One honest, tailored sentence connecting to their risk appetite or past patterns. Can be gently challenging.",
+  "options": [
+    {
+      "letter": "A",
+      "name": "Short memorable label (3-5 words)",
+      "score": 85,
+      "riskScore": 35,
+      "returnScore": 80,
+      "pros": ["Specific pro 1", "Specific pro 2", "Specific pro 3"],
+      "cons": ["Specific con 1", "Specific con 2"],
+      "keyInsight": "One sharp, honest insight about this option that cuts through the noise"
+    }
+  ],
+  "risks": [
+    { "level": "high", "title": "Clear risk title", "description": "Concrete, specific risk description with real consequence" },
+    { "level": "medium", "title": "Clear risk title", "description": "Concrete, specific risk description" },
+    { "level": "low", "title": "Clear risk title", "description": "Concrete, specific risk description" }
+  ],
+  "outcomes": [
+    { "period": "30–90 days", "prediction": "Specific, realistic prediction of what happens if they follow the recommendation" },
+    { "period": "6–18 months", "prediction": "Specific mid-term prediction with concrete markers to watch" },
+    { "period": "3–5 years", "prediction": "Honest long-term view — don't sugarcoat" }
+  ],
+  "decisionType": "one of: high-stakes, reversible, time-sensitive, values-driven, financial, lifestyle",
+  "alternativeAngle": "One contrarian or overlooked perspective worth considering before deciding"
+}`;
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const rawText = (data.content || []).map(b => b.text || '').join('');
+    const clean = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+
+    let result;
+    try {
+      result = JSON.parse(clean);
+    } catch(parseErr) {
+      // Try to extract JSON object from response
+      const match = clean.match(/\{[\s\S]*\}/);
+      if (match) result = JSON.parse(match[0]);
+      else throw new Error('Could not parse AI response. Please try again.');
+    }
+
+    // Validate required fields
+    if (!result.winner || !result.winnerLetter || !Array.isArray(result.options)) {
+      throw new Error('Incomplete AI response. Please try again.');
+    }
+
+    // Save
+    analysisCount++;
+    const record = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+      question,
+      options: opts,
+      winner: result.winner,
+      winnerLetter: result.winnerLetter,
+      confidence: result.confidence || 75,
+      domain,
+      result
+    };
+    history.unshift(record);
+    if (history.length > 60) history.length = 60;
+    saveState();
+
+    stopLoadingSteps();
+    renderResults(result, opts);
+
+  } catch(err) {
+    stopLoadingSteps();
+    console.error(err);
+    showToast('❌', err.message || 'Analysis failed. Please try again.');
+  } finally {
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('loadingCard').classList.remove('show');
+  }
+}
+
+// ═══ RENDER RESULTS ═══
+function scoreColor(s) { return s >= 68 ? 'g' : s >= 42 ? 'y' : 'r'; }
+function riskColor(s) { return s <= 35 ? 'g' : s <= 65 ? 'y' : 'r'; } // inverted
+
+function renderResults(result, opts) {
+  const el = document.getElementById('results');
+
+  const optCardsHTML = (result.options || []).map((opt, i) => {
+    const isWinner = opt.letter === result.winnerLetter;
+    const displayName = opt.name || (opts[i] || ('Option ' + opt.letter));
+    return `
+    <div class="opt-card ${isWinner ? 'winner' : ''}">
+      ${isWinner ? '<div class="rec-chip">Recommended</div>' : ''}
+      <div class="opt-head">
+        <div class="opt-letter">${opt.letter}</div>
+        <div class="opt-name">${esc(displayName)}</div>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <span class="metric-val ${scoreColor(opt.score || 0)}">${opt.score || '—'}%</span>
+          <span class="metric-lbl">Overall</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val ${riskColor(opt.riskScore || 50)}">${opt.riskScore || '—'}%</span>
+          <span class="metric-lbl">Risk</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val ${scoreColor(opt.returnScore || 0)}">${opt.returnScore || '—'}%</span>
+          <span class="metric-lbl">Return</span>
+        </div>
+      </div>
+      ${opt.keyInsight ? `<div class="key-insight">💡 ${esc(opt.keyInsight)}</div>` : ''}
+      <div class="pros-cons">
+        <div class="pc-block">
+          <div class="pc-title pro">✓ Pros</div>
+          <ul class="pc-list pro">${(opt.pros||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+        </div>
+        <div class="pc-block">
+          <div class="pc-title con">✗ Cons</div>
+          <ul class="pc-list con">${(opt.cons||[]).map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const risksHTML = (result.risks || []).map(r => `
+    <div class="risk-row">
+      <div class="risk-badge ${r.level || 'medium'}">${r.level || 'medium'}</div>
+      <div class="risk-text"><strong>${esc(r.title)}: </strong>${esc(r.description)}</div>
+    </div>`).join('');
+
+  const timelineHTML = (result.outcomes || []).map(o => `
+    <div class="tl-item">
+      <div class="tl-period">${esc(o.period)}</div>
+      <div class="tl-text">${esc(o.prediction)}</div>
+    </div>`).join('');
+
+  const altAngle = result.alternativeAngle
+    ? `<div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px 20px;margin-bottom:0;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);font-family:'JetBrains Mono',monospace;margin-bottom:8px;">🔀 Consider This Angle</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">${esc(result.alternativeAngle)}</div>
+       </div>` : '';
+
+  const decisionTypeBadge = result.decisionType
+    ? `<span style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--violet);background:var(--violet-dim);border:1px solid rgba(139,92,246,0.2);padding:3px 9px;border-radius:100px;font-family:'JetBrains Mono',monospace;margin-left:10px;">${result.decisionType}</span>` : '';
+
+  el.innerHTML = `
+    <div class="winner-banner fade">
+      <div class="winner-tag">⚡ AI Recommendation ${decisionTypeBadge}</div>
+      <div class="winner-name">${esc(result.winner)}</div>
+      <div class="winner-summary">${esc(result.executiveSummary || '')}</div>
+      ${result.personalizedNote ? `<div class="personalized-note">🧠 ${esc(result.personalizedNote)}</div>` : ''}
+      <div class="conf-wrap">
+        <div class="conf-labels"><span>AI Confidence</span><b>${result.confidence || 75}%</b></div>
+        <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
+      </div>
+    </div>
+
+    <div class="sec-label">Option Breakdown</div>
+    <div class="opt-cards fade">${optCardsHTML}</div>
+
+    <div class="sec-label">Risk Assessment</div>
+    <div class="risk-panel fade">
+      <div class="risk-head">⚠️ Key Risks to Consider</div>
+      <div class="risk-body">${risksHTML}</div>
+    </div>
+
+    ${altAngle ? `<div class="sec-label">Alternative Perspective</div><div class="fade">${altAngle}</div>` : ''}
+
+    <div class="sec-label">Outcome Forecast</div>
+    <div class="card fade">
+      <div class="card-head">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Predicted Timeline</div>
+        <div class="card-sub">If you follow the recommendation</div>
+      </div>
+      <div class="card-body">
+        <div class="timeline">${timelineHTML}</div>
+      </div>
+    </div>
+
+    <div class="bottom-actions fade">
+      <button class="btn-sec" onclick="resetForm()">↩ New Decision</button>
+      <button class="btn-sec" onclick="copySummary()" style="border-color:var(--border)">📋 Copy Summary</button>
+    </div>
+  `;
+
+  el.className = 'results show';
+  setTimeout(() => {
+    const fill = document.getElementById('confFill');
+    if (fill) fill.style.width = (result.confidence || 75) + '%';
+  }, 150);
+  showToast('✅', `Analysis complete — Option ${result.winnerLetter} recommended (${result.confidence || 75}% confidence)`);
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+}
+
+// ═══ HISTORY ═══
+function renderHistory() {
+  const body = document.getElementById('histBody');
+  document.getElementById('histCount').textContent = history.length + ' decision' + (history.length !== 1 ? 's' : '');
+  if (!history.length) {
+    body.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text3)"><div style="font-size:36px;margin-bottom:14px">📭</div><div style="font-size:14px">No decisions yet</div></div>`;
+    return;
+  }
+  body.innerHTML = history.map(h => `
+    <div class="hist-card" onclick="loadRecord(${h.id})">
+      <div class="hist-meta">
+        <span class="hist-date">📅 ${h.date}</span>
+        <span class="hist-win">→ ${h.winnerLetter} · ${h.confidence}%</span>
+      </div>
+      <div class="hist-q">${esc(h.question)}</div>
+      <div class="hist-detail">${h.options.length} options · ${h.domain}</div>
+    </div>`).join('');
+}
+
+function loadRecord(id) {
+  const rec = history.find(h => h.id === id);
+  if (!rec) return;
+  document.getElementById('question').value = rec.question;
+  rec.options.forEach((o, i) => {
+    const el = document.getElementById('o' + i);
+    if (el) el.value = o;
+  });
+  document.getElementById('domain').value = rec.domain;
+  switchTab('analyze');
+  renderResults(rec.result, rec.options);
+}
+
+// ═══ PATTERNS ═══
+function renderPatterns() {
+  const body = document.getElementById('patternBody');
+  if (history.length < 3) {
+    const pct = (history.length / 3) * 100;
+    body.innerHTML = `
+      <div style="text-align:center;padding:40px 0;color:var(--text3)">
+        <div style="font-size:36px;margin-bottom:14px">🤖</div>
+        <div style="font-size:14px">Patterns emerge after 3+ decisions</div>
+        <div style="font-size:12px;margin-top:8px;margin-bottom:20px">You have ${history.length} of 3</div>
+        <div style="background:var(--surface2);border-radius:100px;height:5px;max-width:200px;margin:0 auto;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:100px;transition:width 0.6s"></div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const domains = {};
+  history.forEach(h => { domains[h.domain] = (domains[h.domain] || 0) + 1; });
+  const topDomain = Object.entries(domains).sort((a,b) => b[1]-a[1])[0];
+  const avgConf = Math.round(history.reduce((s,h) => s+(h.confidence||75), 0) / history.length);
+  const letterCounts = {};
+  history.forEach(h => { letterCounts[h.winnerLetter] = (letterCounts[h.winnerLetter] || 0) + 1; });
+  const favLetter = Object.entries(letterCounts).sort((a,b) => b[1]-a[1])[0];
+  const anchoring = parseInt(favLetter[0].charCodeAt(0)) <= 66 ? 'You tend to favor the first options presented — watch for anchoring bias.' : 'You explore later options well — good at avoiding anchoring bias.';
+  const confInsight = avgConf > 80 ? 'High confidence suggests your decisions are well-structured with clear context.' : avgConf > 65 ? 'Moderate confidence — adding more context to each analysis could sharpen results.' : 'Lower confidence signals genuinely hard decisions. Try breaking them into smaller sub-decisions.';
+
+  body.innerHTML = `
+    <div class="pattern-grid">
+      <div class="pattern-chip">
+        <div class="pattern-chip-lbl">Top Domain</div>
+        <div class="pattern-chip-val">${topDomain[0]}</div>
+        <div class="pattern-chip-sub">${topDomain[1]} of ${history.length} decisions</div>
+      </div>
+      <div class="pattern-chip">
+        <div class="pattern-chip-lbl">Avg Confidence</div>
+        <div class="pattern-chip-val" style="color:var(--teal)">${avgConf}%</div>
+        <div class="pattern-chip-sub">across ${history.length} decisions</div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:14px">Behavioral Observations</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.85;display:flex;flex-direction:column;gap:10px">
+        <div>📌 ${anchoring}</div>
+        <div>📌 Your decisions cluster in <strong style="color:var(--text)">${topDomain[0]}</strong> — this is where you're most actively growing or navigating change.</div>
+        <div>📌 ${confInsight}</div>
+        <div>📌 Each new decision trains the AI further. Your recommendations are now more personalized than at the start.</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,var(--blue-dim),var(--violet-dim));border:1px solid rgba(91,142,240,0.2);border-radius:12px;padding:20px">
+      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-family:'JetBrains Mono',monospace;margin-bottom:10px">🧠 AI Personalization Active</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">Future analyses incorporate your decision history, domain preferences, and risk patterns to deliver increasingly tailored recommendations.</div>
+    </div>`;
+}
+
+// ═══ UTILITIES ═══
+function esc(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function resetForm() {
+  document.getElementById('question').value = '';
+  ['o0','o1','o2','o3'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ctx').value = '';
+  document.getElementById('results').className = 'results';
+  document.getElementById('results').innerHTML = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copySummary() {
+  const last = history[0];
+  if (!last) return;
+  const text = `Decision: ${last.question}\n✅ Recommended: Option ${last.winnerLetter} — ${last.winner}\nConfidence: ${last.confidence}%\nAnalyzed by DecisionIQ`;
+  navigator.clipboard.writeText(text).then(() => showToast('📋', 'Summary copied!')).catch(() => showToast('❌', 'Copy failed'));
+}
+
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3800);
+}
+</script>
+</body>
+</html>

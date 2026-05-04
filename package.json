@@ -1,0 +1,9 @@
+{
+  "name": "decisioniq",
+  "version": "1.0.0",
+  "description": "AI Decision Intelligence System",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
