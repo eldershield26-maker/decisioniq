@@ -10,16 +10,18 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { prompt } = req.body;
+
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid prompt' });
   }
+
   if (prompt.length > 8000) {
     return res.status(400).json({ error: 'Prompt too long' });
   }
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured on server' });
+    return res.status(500).json({ error: 'GROQ API key not configured' });
   }
 
   try {
@@ -44,8 +46,8 @@ export default async function handler(req, res) {
     }
 
     const data = await groqRes.json();
-    // Reformat Groq response to match the shape frontend expects
     const text = data.choices?.[0]?.message?.content || '';
+
     return res.status(200).json({
       content: [{ type: 'text', text }]
     });
